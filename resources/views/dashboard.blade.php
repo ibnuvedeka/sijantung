@@ -59,7 +59,7 @@
                     <div class="p-6 flex flex-col md:flex-row items-center justify-between gap-4">
                         <div>
                             @if(auth()->check() && auth()->user()->role === 'developer')
-                                <h3 class="font-extrabold text-xl text-blue-400 mb-1">Halo AGUS Developer!</h3>
+                                <h3 class="font-extrabold text-xl text-blue-400 mb-1">Halo AGUS JAWA!</h3>
                                 <p class="text-slate-300">Halaman ini berisi tombol dan pengaturan khusus yang hanya bisa dilihat oleh developer.</p>
                             @else
                                 <h3 class="font-extrabold text-xl text-slate-200 mb-1">Selamat Datang, {{ auth()->user()->name ?? 'Pengguna' }}!</h3>
