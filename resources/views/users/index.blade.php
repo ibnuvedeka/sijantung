@@ -1,109 +1,85 @@
 <x-app-layout>
-    <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
-            {{ __('Manajemen User') }}
-        </h2>
-    </x-slot>
+    <x-slot name="header">Manajemen User</x-slot>
 
-    <div class="py-12">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            
-            @if(session('success'))
-                <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative mb-4" role="alert">
-                    <span class="block sm:inline">{{ session('success') }}</span>
-                </div>
-            @endif
+    @if(session('success'))
+        <div style="margin-bottom:14px; padding:10px 14px; border-radius:8px; background:rgba(16,185,129,0.08); border:1px solid rgba(16,185,129,0.2); color:#34d399; font-size:0.8125rem;">
+            {{ session('success') }}
+        </div>
+    @endif
+    @if(session('error'))
+        <div style="margin-bottom:14px; padding:10px 14px; border-radius:8px; background:rgba(239,68,68,0.08); border:1px solid rgba(239,68,68,0.2); color:#f87171; font-size:0.8125rem;">
+            {{ session('error') }}
+        </div>
+    @endif
 
-            @if(session('error'))
-                <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4" role="alert">
-                    <span class="block sm:inline">{{ session('error') }}</span>
-                </div>
-            @endif
+    {{-- Toolbar --}}
+    <div style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:10px; margin-bottom:16px;">
+        <a href="{{ route('users.create') }}" wire:navigate style="display:inline-flex; align-items:center; gap:6px; padding:7px 14px; border-radius:6px; background:rgba(234,179,8,0.1); border:1px solid rgba(234,179,8,0.2); color:#facc15; font-size:0.8125rem; font-weight:600; text-decoration:none;">
+            <svg style="width:14px;height:14px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+            Tambah User
+        </a>
+    </div>
 
-            <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-xl sm:rounded-2xl border border-gray-100 dark:border-gray-700">
-                <div class="p-8 text-gray-900 dark:text-gray-100">
-                    
-                    <div class="flex justify-between items-center mb-8">
-                        <div>
-                            <h3 class="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-indigo-600 dark:from-blue-400 dark:to-indigo-400">Daftar Pengguna</h3>
-                            <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">Kelola data pengguna dan hak akses sistem.</p>
-                        </div>
-                        <a href="{{ route('users.create') }}" class="inline-flex items-center gap-2 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-semibold py-2.5 px-5 rounded-full shadow-lg shadow-blue-500/30 transition-all duration-300 transform hover:-translate-y-1">
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
-                            Tambah User
-                        </a>
-                    </div>
-
-                    <div class="overflow-x-auto rounded-xl border border-gray-200 dark:border-gray-700">
-                        <table class="min-w-full bg-white dark:bg-gray-800 w-full text-left border-collapse">
-                            <thead>
-                                <tr class="bg-gray-50 dark:bg-gray-700/50 text-gray-500 dark:text-gray-400 text-xs uppercase tracking-wider">
-                                    <th class="py-4 px-6 font-semibold">No</th>
-                                    <th class="py-4 px-6 font-semibold">Pengguna</th>
-                                    <th class="py-4 px-6 font-semibold">Username</th>
-                                    <th class="py-4 px-6 font-semibold">Role</th>
-                                    <th class="py-4 px-6 font-semibold text-center">Aksi</th>
-                                </tr>
-                            </thead>
-                            <tbody class="text-gray-600 dark:text-gray-300 text-sm divide-y divide-gray-200 dark:divide-gray-700">
-                                @foreach($users as $key => $user)
-                                <tr class="hover:bg-blue-50/50 dark:hover:bg-gray-700/50 transition-colors duration-200 group">
-                                    <td class="py-4 px-6 whitespace-nowrap">
-                                        <span class="text-gray-500 font-medium">{{ $users->firstItem() + $key }}</span>
-                                    </td>
-                                    <td class="py-4 px-6">
-                                        <div class="flex items-center gap-3">
-                                            <div class="h-10 w-10 rounded-full bg-gradient-to-tr from-blue-500 to-purple-500 flex items-center justify-center text-white font-bold shadow-md">
-                                                {{ strtoupper(substr($user->name, 0, 1)) }}
-                                            </div>
-                                            <div>
-                                                <p class="font-semibold text-gray-900 dark:text-white">{{ $user->name }}</p>
-                                                <p class="text-xs text-gray-500 dark:text-gray-400">{{ $user->email }}</p>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td class="py-4 px-6">
-                                        <span class="bg-gray-100 dark:bg-gray-700 px-3 py-1 rounded-md text-xs font-mono text-gray-600 dark:text-gray-300 border border-gray-200 dark:border-gray-600">
-                                            {{ \Str::limit($user->username, 15) }}
-                                        </span>
-                                    </td>
-                                    <td class="py-4 px-6">
-                                        @if($user->role === 'developer')
-                                            <span class="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-semibold rounded-full bg-purple-50 dark:bg-purple-900/30 text-purple-700 dark:text-purple-400 border border-purple-200 dark:border-purple-800">
-                                                <span class="w-1.5 h-1.5 rounded-full bg-purple-500"></span> Developer
-                                            </span>
-                                        @else
-                                            <span class="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-semibold rounded-full bg-emerald-50 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800">
-                                                <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span> User
-                                            </span>
-                                        @endif
-                                    </td>
-                                    <td class="py-4 px-6 text-center">
-                                        <div class="flex items-center justify-center space-x-3">
-                                            <a href="{{ route('users.edit', $user->id) }}" class="p-2 text-blue-600 hover:bg-blue-100 dark:hover:bg-blue-900/30 rounded-lg transition-colors tooltip" title="Edit">
-                                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
-                                            </a>
-                                            <form action="{{ route('users.destroy', $user->id) }}" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin menghapus user ini?');" class="inline">
-                                                @csrf
-                                                @method('DELETE')
-                                                <button type="submit" class="p-2 text-red-600 hover:bg-red-100 dark:hover:bg-red-900/30 rounded-lg transition-colors tooltip" title="Hapus">
-                                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
-                                                </button>
-                                            </form>
-                                        </div>
-                                    </td>
-                                </tr>
-                                @endforeach
-                            </tbody>
-                        </table>
-                    </div>
-                    
-                    <div class="mt-4">
-                        {{ $users->links() }}
-                    </div>
-
-                </div>
-            </div>
+    {{-- Table --}}
+    <div style="border-radius:10px; background:#111827; border:1px solid rgba(255,255,255,0.07); overflow:hidden;">
+        <div style="overflow-x:auto;">
+            <table style="width:100%; border-collapse:collapse; min-width:560px;">
+                <thead>
+                    <tr style="border-bottom:1px solid rgba(255,255,255,0.07);">
+                        <th style="padding:10px 14px; text-align:left; font-size:0.6875rem; font-weight:600; text-transform:uppercase; letter-spacing:0.08em; color:#475569; white-space:nowrap;">#</th>
+                        <th style="padding:10px 14px; text-align:left; font-size:0.6875rem; font-weight:600; text-transform:uppercase; letter-spacing:0.08em; color:#475569; white-space:nowrap;">Pengguna</th>
+                        <th style="padding:10px 14px; text-align:left; font-size:0.6875rem; font-weight:600; text-transform:uppercase; letter-spacing:0.08em; color:#475569; white-space:nowrap;">Username</th>
+                        <th style="padding:10px 14px; text-align:left; font-size:0.6875rem; font-weight:600; text-transform:uppercase; letter-spacing:0.08em; color:#475569; white-space:nowrap;">Role</th>
+                        <th style="padding:10px 14px; text-align:center; font-size:0.6875rem; font-weight:600; text-transform:uppercase; letter-spacing:0.08em; color:#475569; white-space:nowrap;">Aksi</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach($users as $key => $user)
+                    <tr style="border-bottom:1px solid rgba(255,255,255,0.04); transition:background 0.1s;" onmouseover="this.style.background='rgba(255,255,255,0.02)'" onmouseout="this.style.background='transparent'">
+                        <td style="padding:10px 14px; font-size:0.8125rem; color:#475569;">{{ $users->firstItem() + $key }}</td>
+                        <td style="padding:10px 14px;">
+                            <div style="display:flex; align-items:center; gap:10px;">
+                                <div style="width:32px; height:32px; border-radius:50%; background:rgba(234,179,8,0.15); border:1px solid rgba(234,179,8,0.2); display:flex; align-items:center; justify-content:center; font-size:0.75rem; font-weight:700; color:#facc15; flex-shrink:0;">
+                                    {{ strtoupper(substr($user->name, 0, 1)) }}
+                                </div>
+                                <div>
+                                    <p style="font-size:0.8125rem; font-weight:600; color:#e2e8f0; margin:0;">{{ $user->name }}</p>
+                                    <p style="font-size:0.6875rem; color:#475569; margin:0;">{{ $user->email }}</p>
+                                </div>
+                            </div>
+                        </td>
+                        <td style="padding:10px 14px; font-size:0.8125rem; color:#64748b; font-family:monospace;">{{ \Str::limit($user->username, 15) }}</td>
+                        <td style="padding:10px 14px;">
+                            @if($user->role === 'developer')
+                                <span style="font-size:0.6875rem; font-weight:600; padding:2px 8px; border-radius:4px; background:rgba(168,85,247,0.1); color:#c084fc;">Developer</span>
+                            @else
+                                <span style="font-size:0.6875rem; font-weight:600; padding:2px 8px; border-radius:4px; background:rgba(16,185,129,0.1); color:#34d399;">User</span>
+                            @endif
+                        </td>
+                        <td style="padding:10px 14px; text-align:center; white-space:nowrap;">
+                            <div style="display:inline-flex; align-items:center; gap:10px;">
+                                <a href="{{ route('users.edit', $user->id) }}" wire:navigate title="Edit" style="color:#94a3b8; transition:color 0.15s;" onmouseover="this.style.color='#e2e8f0'" onmouseout="this.style.color='#94a3b8'">
+                                    <svg style="width:15px;height:15px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
+                                </a>
+                                <form action="{{ route('users.destroy', $user->id) }}" method="POST" onsubmit="return confirm('Yakin hapus user ini?')" style="display:inline;">
+                                    @csrf @method('DELETE')
+                                    <button type="submit" title="Hapus" style="background:none; border:none; cursor:pointer; color:#64748b; padding:0; transition:color 0.15s;" onmouseover="this.style.color='#f87171'" onmouseout="this.style.color='#64748b'">
+                                        <svg style="width:15px;height:15px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+                                    </button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                    @endforeach
+                </tbody>
+            </table>
         </div>
     </div>
+
+    @if($users->hasPages())
+        <div style="margin-top:14px;">
+            {{ $users->links() }}
+        </div>
+    @endif
+
 </x-app-layout>

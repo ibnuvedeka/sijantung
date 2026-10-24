@@ -1,322 +1,274 @@
 <x-app-layout>
-    <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
-            {{ __('Sistem Kartu Kendali (Prototype)') }}
-        </h2>
-    </x-slot>
+    <x-slot name="header">Kartu Kendali</x-slot>
 
-    <div class="py-8 max-w-7xl mx-auto sm:px-6 lg:px-8">
-        
-        <!-- Premium Navigation Tabs -->
-        <div class="flex space-x-2 mb-6 bg-white/60 dark:bg-gray-800/60 backdrop-blur-lg p-2 rounded-2xl shadow-sm border border-white/40 dark:border-gray-700/50 relative z-10">
-            <button onclick="showSection('dashboard')" id="tab-dashboard" class="nav-link w-full sm:w-auto px-6 py-3 bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-semibold rounded-xl shadow-lg shadow-blue-500/30 transition-all duration-300 transform hover:-translate-y-0.5">
-                <div class="flex items-center justify-center gap-2">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path></svg>
-                    Dashboard
-                </div>
-            </button>
-            @if(auth()->check() && auth()->user()->role === 'developer')
-            <button onclick="showSection('transaksi')" id="tab-transaksi" class="nav-link w-full sm:w-auto px-6 py-3 hover:bg-white dark:hover:bg-gray-700 text-gray-600 dark:text-gray-300 font-medium rounded-xl transition-all duration-300">
-                <div class="flex items-center justify-center gap-2">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
-                    Input Transaksi
-                </div>
-            </button>
-            @endif
-            <button onclick="showSection('laporan')" id="tab-laporan" class="nav-link w-full sm:w-auto px-6 py-3 hover:bg-white dark:hover:bg-gray-700 text-gray-600 dark:text-gray-300 font-medium rounded-xl transition-all duration-300">
-                <div class="flex items-center justify-center gap-2">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
-                    Cetak Laporan
-                </div>
-            </button>
+    {{-- Tabs --}}
+    <div style="display:flex; gap:4px; margin-bottom:16px; background:#0d1117; padding:4px; border-radius:8px; border:1px solid rgba(255,255,255,0.06); width:fit-content;">
+        <button onclick="showSection('dashboard')" id="tab-dashboard" class="kk-tab kk-tab-active">
+            Dashboard
+        </button>
+        @if(auth()->check() && auth()->user()->role === 'developer')
+        <button onclick="showSection('transaksi')" id="tab-transaksi" class="kk-tab">
+            Input Transaksi
+        </button>
+        @endif
+        <button onclick="showSection('laporan')" id="tab-laporan" class="kk-tab">
+            Cetak Laporan
+        </button>
+    </div>
+
+    {{-- === DASHBOARD SECTION === --}}
+    <div id="dashboard" class="kk-section">
+
+        {{-- Stat Cards --}}
+        <div style="display:grid; grid-template-columns:repeat(auto-fill, minmax(180px, 1fr)); gap:10px; margin-bottom:16px;">
+            <div style="padding:14px; border-radius:10px; background:#111827; border:1px solid rgba(255,255,255,0.07);">
+                <p style="font-size:0.6875rem; font-weight:600; text-transform:uppercase; letter-spacing:0.08em; color:#475569; margin:0 0 8px;">Total Pagu</p>
+                <p id="dash-pagu" style="font-size:1.125rem; font-weight:700; color:#60a5fa; margin:0;">Rp 0</p>
+            </div>
+            <div style="padding:14px; border-radius:10px; background:#111827; border:1px solid rgba(255,255,255,0.07);">
+                <p style="font-size:0.6875rem; font-weight:600; text-transform:uppercase; letter-spacing:0.08em; color:#475569; margin:0 0 8px;">Terserap</p>
+                <p id="dash-realisasi" style="font-size:1.125rem; font-weight:700; color:#facc15; margin:0;">Rp 0</p>
+            </div>
+            <div style="padding:14px; border-radius:10px; background:#111827; border:1px solid rgba(255,255,255,0.07);">
+                <p style="font-size:0.6875rem; font-weight:600; text-transform:uppercase; letter-spacing:0.08em; color:#475569; margin:0 0 8px;">Sisa Saldo</p>
+                <p id="dash-sisa" style="font-size:1.125rem; font-weight:700; color:#34d399; margin:0;">Rp 0</p>
+            </div>
         </div>
 
-        <div class="bg-white/80 dark:bg-gray-800/90 backdrop-blur-xl p-8 shadow-2xl shadow-indigo-100/20 dark:shadow-none rounded-3xl border border-white/50 dark:border-gray-700 min-h-[500px] relative overflow-hidden">
-            <!-- Decorative background blob -->
-            <div class="absolute top-0 right-0 -mr-20 -mt-20 w-64 h-64 rounded-full bg-gradient-to-br from-blue-100/40 to-purple-100/40 dark:from-blue-900/20 dark:to-purple-900/20 blur-3xl pointer-events-none"></div>
-            
-            <div id="dashboard" class="content-section block relative z-10 animate-fade-in-up">
-                <div class="flex justify-between items-end mb-8">
-                    <div>
-                        <h3 class="text-3xl font-extrabold bg-clip-text text-transparent bg-gradient-to-r from-blue-700 to-indigo-600 dark:from-blue-400 dark:to-indigo-400">Ringkasan Pagu RKA</h3>
-                        <p class="text-gray-500 dark:text-gray-400 mt-2">Pantau realisasi anggaran secara real-time.</p>
-                    </div>
-                </div>
-                
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                    <div class="p-6 bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-blue-900/30 dark:to-indigo-900/30 rounded-2xl border border-blue-100/50 dark:border-blue-800/50 shadow-sm hover:shadow-md transition-shadow">
-                        <div class="flex items-center gap-4 mb-3">
-                            <div class="p-3 bg-blue-500 text-white rounded-xl shadow-lg shadow-blue-500/30">
-                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                            </div>
-                            <span class="block text-sm font-semibold text-blue-900/70 dark:text-blue-300 uppercase tracking-wider">Total Pagu</span>
-                        </div>
-                        <span id="dash-pagu" class="text-3xl font-black text-blue-700 dark:text-blue-400 truncate block">Rp 0</span>
-                    </div>
-                    <div class="p-6 bg-gradient-to-br from-amber-50 to-orange-50 dark:from-amber-900/30 dark:to-orange-900/30 rounded-2xl border border-amber-100/50 dark:border-amber-800/50 shadow-sm hover:shadow-md transition-shadow">
-                        <div class="flex items-center gap-4 mb-3">
-                            <div class="p-3 bg-amber-500 text-white rounded-xl shadow-lg shadow-amber-500/30">
-                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path></svg>
-                            </div>
-                            <span class="block text-sm font-semibold text-amber-900/70 dark:text-amber-300 uppercase tracking-wider">Terserap</span>
-                        </div>
-                        <span id="dash-realisasi" class="text-3xl font-black text-amber-600 dark:text-amber-400 truncate block">Rp 0</span>
-                    </div>
-                    <div class="p-6 bg-gradient-to-br from-emerald-50 to-teal-50 dark:from-emerald-900/30 dark:to-teal-900/30 rounded-2xl border border-emerald-100/50 dark:border-emerald-800/50 shadow-sm hover:shadow-md transition-shadow">
-                        <div class="flex items-center gap-4 mb-3">
-                            <div class="p-3 bg-emerald-500 text-white rounded-xl shadow-lg shadow-emerald-500/30">
-                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                            </div>
-                            <span class="block text-sm font-semibold text-emerald-900/70 dark:text-emerald-300 uppercase tracking-wider">Sisa Saldo</span>
-                        </div>
-                        <span id="dash-sisa" class="text-3xl font-black text-emerald-600 dark:text-emerald-400 truncate block">Rp 0</span>
-                    </div>
-                </div>
-                
-                <div class="mt-10">
-                    <div class="flex flex-col md:flex-row justify-between items-center mb-4 gap-4">
-                        <h4 class="font-bold text-xl text-gray-800 dark:text-white flex items-center gap-2 w-full md:w-auto">
-                            <svg class="w-6 h-6 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"></path></svg>
-                            Rincian RKA yang Terserap
-                        </h4>
-                    </div>
+        {{-- Filters --}}
+        <div style="display:grid; grid-template-columns:repeat(auto-fill, minmax(170px, 1fr)); gap:8px; margin-bottom:12px;">
+            <select id="dashboard-kegiatan" onchange="updateSubKegiatanDropdown('dashboard'); renderDashboard()" class="kk-select">
+                <option value="">-- Filter Kegiatan --</option>
+            </select>
+            <select id="dashboard-sub-kegiatan" onchange="updateRekeningDropdown('dashboard'); renderDashboard()" class="kk-select">
+                <option value="">-- Filter Sub Kegiatan --</option>
+            </select>
+            <select id="dashboard-rekening" onchange="renderDashboard()" class="kk-select">
+                <option value="">-- Filter Rekening --</option>
+            </select>
+            <input type="text" id="search-rka" onkeyup="renderDashboard()" placeholder="Cari teks bebas..."
+                style="padding:7px 12px; border-radius:6px; background:#0d1117; border:1px solid rgba(255,255,255,0.1); color:#e2e8f0; font-size:0.8125rem; outline:none;"
+                onfocus="this.style.borderColor='rgba(234,179,8,0.5)'" onblur="this.style.borderColor='rgba(255,255,255,0.1)'">
+        </div>
 
-                    <div class="grid grid-cols-1 md:grid-cols-4 gap-3 mb-4">
-                        <select id="dashboard-kegiatan" onchange="updateSubKegiatanDropdown('dashboard'); renderDashboard()" class="w-full p-2.5 text-sm text-gray-900 border border-gray-300 rounded-lg bg-white focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-800 dark:border-gray-600 dark:text-white shadow-sm transition-all">
-                            <option value="">-- Filter Kegiatan --</option>
-                        </select>
-                        <select id="dashboard-sub-kegiatan" onchange="updateRekeningDropdown('dashboard'); renderDashboard()" class="w-full p-2.5 text-sm text-gray-900 border border-gray-300 rounded-lg bg-white focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-800 dark:border-gray-600 dark:text-white shadow-sm transition-all">
-                            <option value="">-- Filter Sub Kegiatan --</option>
-                        </select>
-                        <select id="dashboard-rekening" onchange="renderDashboard()" class="w-full p-2.5 text-sm text-gray-900 border border-gray-300 rounded-lg bg-white focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-800 dark:border-gray-600 dark:text-white shadow-sm transition-all">
-                            <option value="">-- Filter Rekening --</option>
-                        </select>
-                        <div class="relative w-full">
-                            <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
-                                <svg class="w-5 h-5 text-gray-500 dark:text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
-                            </div>
-                            <input type="text" id="search-rka" onkeyup="renderDashboard()" placeholder="Cari teks bebas..." 
-                                class="block w-full p-2.5 pl-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-white focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-800 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-indigo-500 dark:focus:border-indigo-500 transition-all shadow-sm">
-                        </div>
-                    </div>
-                    <div class="overflow-x-auto rounded-2xl border border-gray-100 dark:border-gray-700 shadow-sm bg-white dark:bg-gray-800">
-                        <table class="min-w-full">
-                            <thead class="bg-gray-50 dark:bg-gray-700/50">
-                                <tr>
-                                    <th class="py-4 px-5 text-left text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Kegiatan & Sub</th>
-                                    <th class="py-4 px-5 text-left text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Rekening</th>
-                                    <th class="py-4 px-5 text-right text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Pagu</th>
-                                    <th class="py-4 px-5 text-right text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Terserap</th>
-                                    <th class="py-4 px-5 text-right text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Sisa Saldo</th>
-                                </tr>
-                            </thead>
-                            <tbody id="dash-rincian" class="divide-y divide-gray-100 dark:divide-gray-700 text-sm">
-                                <!-- Data rincian dimuat js -->
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
+        {{-- Rincian Table --}}
+        <div style="border-radius:10px; background:#111827; border:1px solid rgba(255,255,255,0.07); overflow:hidden;">
+            <div style="overflow-x:auto;">
+                <table style="width:100%; border-collapse:collapse; min-width:640px;">
+                    <thead>
+                        <tr style="border-bottom:1px solid rgba(255,255,255,0.07);">
+                            <th style="padding:10px 14px; text-align:left; font-size:0.6875rem; font-weight:600; text-transform:uppercase; letter-spacing:0.08em; color:#475569;">Kegiatan & Sub</th>
+                            <th style="padding:10px 14px; text-align:left; font-size:0.6875rem; font-weight:600; text-transform:uppercase; letter-spacing:0.08em; color:#475569;">Rekening</th>
+                            <th style="padding:10px 14px; text-align:right; font-size:0.6875rem; font-weight:600; text-transform:uppercase; letter-spacing:0.08em; color:#475569;">Pagu</th>
+                            <th style="padding:10px 14px; text-align:right; font-size:0.6875rem; font-weight:600; text-transform:uppercase; letter-spacing:0.08em; color:#475569;">Terserap</th>
+                            <th style="padding:10px 14px; text-align:right; font-size:0.6875rem; font-weight:600; text-transform:uppercase; letter-spacing:0.08em; color:#475569;">Sisa</th>
+                        </tr>
+                    </thead>
+                    <tbody id="dash-rincian">
+                        {{-- Data loaded by JS --}}
+                    </tbody>
+                </table>
             </div>
+        </div>
+    </div>
 
-            @if(auth()->check() && auth()->user()->role === 'developer')
-            <div id="transaksi" class="content-section d-none relative z-10 animate-fade-in-up">
-                <div class="mb-8">
-                    <h3 class="text-3xl font-extrabold bg-clip-text text-transparent bg-gradient-to-r from-blue-700 to-indigo-600 dark:from-blue-400 dark:to-indigo-400">Input Realisasi Anggaran</h3>
-                    <p class="text-gray-500 dark:text-gray-400 mt-2">Catat pengeluaran belanja berdasarkan rekening.</p>
-                </div>
-                
-                <form id="form-transaksi" class="max-w-2xl bg-white/50 dark:bg-gray-800/50 p-6 rounded-2xl border border-gray-100 dark:border-gray-700 shadow-sm space-y-5">
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
-                        <div class="col-span-1 md:col-span-2">
-                            <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1">Kegiatan</label>
-                            <select id="transaksi-kegiatan" onchange="updateSubKegiatanDropdown('transaksi')" class="w-full rounded-xl border-gray-200 focus:border-indigo-500 focus:ring-indigo-500 bg-gray-50/50 dark:bg-gray-900/50 dark:border-gray-600 text-gray-900 dark:text-white transition-all shadow-sm py-2.5"></select>
-                        </div>
-                        <div class="col-span-1 md:col-span-2">
-                            <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1">Sub Kegiatan</label>
-                            <select id="transaksi-sub-kegiatan" onchange="updateRekeningDropdown('transaksi')" class="w-full rounded-xl border-gray-200 focus:border-indigo-500 focus:ring-indigo-500 bg-gray-50/50 dark:bg-gray-900/50 dark:border-gray-600 text-gray-900 dark:text-white transition-all shadow-sm py-2.5"></select>
-                        </div>
-                        <div class="col-span-1 md:col-span-2 relative">
-                            <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1">Rekening RKA</label>
-                            <select id="transaksi-rekening" onchange="updateInfoSaldo()" class="w-full rounded-xl border-gray-200 focus:border-indigo-500 focus:ring-indigo-500 bg-gray-50/50 dark:bg-gray-900/50 dark:border-gray-600 text-gray-900 dark:text-white transition-all shadow-sm py-2.5"></select>
-                            <div id="info-saldo" class="absolute right-0 top-0 text-xs px-3 py-1 rounded-full bg-blue-50 text-blue-700 font-bold transform -translate-y-2 translate-x-2 hidden"></div>
+    {{-- === INPUT TRANSAKSI SECTION === --}}
+    @if(auth()->check() && auth()->user()->role === 'developer')
+    <div id="transaksi" class="kk-section kk-hidden">
+        <div style="max-width:580px;">
+            <div style="padding:20px; border-radius:10px; background:#111827; border:1px solid rgba(255,255,255,0.07);">
+                <form id="form-transaksi">
+                    <div style="display:flex; flex-direction:column; gap:12px;">
+                        <div>
+                            <label class="kk-label">Kegiatan</label>
+                            <select id="transaksi-kegiatan" onchange="updateSubKegiatanDropdown('transaksi')" class="kk-select" style="width:100%;"></select>
                         </div>
                         <div>
-                            <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1">Tanggal</label>
-                            <input type="date" id="transaksi-tanggal" required class="w-full rounded-xl border-gray-200 focus:border-indigo-500 focus:ring-indigo-500 bg-gray-50/50 dark:bg-gray-900/50 dark:border-gray-600 dark:text-white transition-all shadow-sm py-2.5">
+                            <label class="kk-label">Sub Kegiatan</label>
+                            <select id="transaksi-sub-kegiatan" onchange="updateRekeningDropdown('transaksi')" class="kk-select" style="width:100%;"></select>
                         </div>
-                        <div>
-                            <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1">Jumlah (Rp)</label>
-                            <div class="relative">
-                                <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                                    <span class="text-gray-500 font-semibold">Rp</span>
-                                </div>
-                                <input type="number" id="transaksi-jumlah" required class="w-full pl-12 rounded-xl border-gray-200 focus:border-indigo-500 focus:ring-indigo-500 bg-gray-50/50 dark:bg-gray-900/50 dark:border-gray-600 dark:text-white transition-all shadow-sm py-2.5" placeholder="0">
+                        <div style="position:relative;">
+                            <label class="kk-label">Rekening RKA</label>
+                            <select id="transaksi-rekening" onchange="updateInfoSaldo()" class="kk-select" style="width:100%;"></select>
+                            <div id="info-saldo" style="display:none; position:absolute; right:0; top:0; font-size:0.6875rem; font-weight:700; padding:2px 8px; border-radius:4px; background:rgba(16,185,129,0.1); color:#34d399; border:1px solid rgba(16,185,129,0.2);"></div>
+                        </div>
+                        <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
+                            <div>
+                                <label class="kk-label">Tanggal</label>
+                                <input type="date" id="transaksi-tanggal" required class="kk-input" style="width:100%; color-scheme:dark;">
+                            </div>
+                            <div>
+                                <label class="kk-label">Jumlah (Rp)</label>
+                                <input type="number" id="transaksi-jumlah" required class="kk-input" style="width:100%;" placeholder="0">
                             </div>
                         </div>
-                        <div class="col-span-1 md:col-span-2">
-                            <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1">Uraian Belanja</label>
-                            <textarea id="transaksi-uraian" required rows="3" class="w-full rounded-xl border-gray-200 focus:border-indigo-500 focus:ring-indigo-500 bg-gray-50/50 dark:bg-gray-900/50 dark:border-gray-600 dark:text-white transition-all shadow-sm py-2.5 resize-none" placeholder="Masukkan uraian belanja..."></textarea>
+                        <div>
+                            <label class="kk-label">Uraian Belanja</label>
+                            <textarea id="transaksi-uraian" required rows="3" class="kk-input" style="width:100%; resize:vertical;" placeholder="Masukkan uraian belanja..."></textarea>
                         </div>
-                    </div>
-                    
-                    <div class="pt-2">
-                        <button type="submit" class="w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-bold py-3 px-8 rounded-xl shadow-lg shadow-blue-500/30 transition-all duration-300 transform hover:-translate-y-1">
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4"></path></svg>
-                            Simpan Transaksi
-                        </button>
+                        <div style="padding-top:10px; border-top:1px solid rgba(255,255,255,0.06);">
+                            <button type="submit" style="padding:8px 18px; border-radius:6px; background:rgba(234,179,8,0.15); border:1px solid rgba(234,179,8,0.3); color:#facc15; font-size:0.8125rem; font-weight:600; cursor:pointer;">
+                                Simpan Transaksi
+                            </button>
+                        </div>
                     </div>
                 </form>
             </div>
-            @endif
+        </div>
+    </div>
+    @endif
 
-            <div id="laporan" class="content-section d-none relative z-10 animate-fade-in-up">
-                <div class="mb-8 no-print">
-                    <h3 class="text-3xl font-extrabold bg-clip-text text-transparent bg-gradient-to-r from-blue-700 to-indigo-600 dark:from-blue-400 dark:to-indigo-400">Laporan Kartu Kendali</h3>
-                    <p class="text-gray-500 dark:text-gray-400 mt-2">Filter dan cetak laporan realisasi anggaran ke PDF.</p>
+    {{-- === LAPORAN SECTION === --}}
+    <div id="laporan" class="kk-section kk-hidden">
+        {{-- Filter Laporan --}}
+        <div class="no-print" style="display:flex; flex-wrap:wrap; gap:8px; align-items:flex-end; margin-bottom:14px;">
+            <div>
+                <label class="kk-label">Kegiatan</label>
+                <select id="laporan-kegiatan" onchange="updateSubKegiatanDropdown('laporan')" class="kk-select"></select>
+            </div>
+            <div>
+                <label class="kk-label">Sub Kegiatan</label>
+                <select id="laporan-sub-kegiatan" onchange="updateRekeningDropdown('laporan')" class="kk-select"></select>
+            </div>
+            <div>
+                <label class="kk-label">Rekening</label>
+                <select id="laporan-rekening" class="kk-select"></select>
+            </div>
+            <div style="display:flex; gap:6px; padding-top:18px;">
+                <button onclick="renderLaporan()" style="padding:7px 14px; border-radius:6px; background:rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.1); color:#94a3b8; font-size:0.8125rem; font-weight:500; cursor:pointer;">
+                    Tampilkan
+                </button>
+                <button onclick="window.print()" style="padding:7px 14px; border-radius:6px; background:rgba(234,179,8,0.15); border:1px solid rgba(234,179,8,0.3); color:#facc15; font-size:0.8125rem; font-weight:600; cursor:pointer;">
+                    Cetak PDF
+                </button>
+            </div>
+        </div>
+
+        {{-- Print Area --}}
+        <div id="print-area" style="background:#111827; border-radius:10px; border:1px solid rgba(255,255,255,0.07); padding:20px; min-height:300px;">
+            <div class="no-print" style="text-align:center; color:#475569; padding:40px 0; font-size:0.8125rem; font-style:italic;">
+                Pilih filter dan klik "Tampilkan" untuk preview laporan.
+            </div>
+
+            <div id="laporan-content" style="display:none; color:#e2e8f0;">
+                <div class="print-header" style="display:none; text-align:center; margin-bottom:16px;">
+                    <h2 style="font-size:1rem; font-weight:700; text-transform:uppercase; margin:0;">Laporan Kartu Kendali</h2>
+                    <p style="font-size:0.75rem; margin:4px 0 0;">Realisasi Anggaran SKPD</p>
+                    <div style="border-bottom:2px solid #000; margin-top:8px 0 2px;"></div>
+                    <div style="border-bottom:1px solid #000; margin-bottom:16px;"></div>
                 </div>
-                
-                <div class="bg-gray-50/80 dark:bg-gray-900/50 p-5 rounded-2xl border border-gray-100 dark:border-gray-700 mb-8 no-print flex flex-col md:flex-row gap-4 items-end shadow-sm">
-                    <div class="w-full md:w-1/3">
-                        <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1">Kegiatan</label>
-                        <select id="laporan-kegiatan" onchange="updateSubKegiatanDropdown('laporan')" class="w-full rounded-lg border-gray-200 focus:border-indigo-500 focus:ring-indigo-500 bg-white dark:bg-gray-800 dark:border-gray-600 py-2 text-sm text-gray-900 dark:text-white"></select>
-                    </div>
-                    <div class="w-full md:w-1/3">
-                        <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1">Sub Kegiatan</label>
-                        <select id="laporan-sub-kegiatan" onchange="updateRekeningDropdown('laporan')" class="w-full rounded-lg border-gray-200 focus:border-indigo-500 focus:ring-indigo-500 bg-white dark:bg-gray-800 dark:border-gray-600 py-2 text-sm text-gray-900 dark:text-white"></select>
-                    </div>
-                    <div class="w-full md:w-1/3">
-                        <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1">Rekening</label>
-                        <select id="laporan-rekening" class="w-full rounded-lg border-gray-200 focus:border-indigo-500 focus:ring-indigo-500 bg-white dark:bg-gray-800 dark:border-gray-600 py-2 text-sm text-gray-900 dark:text-white"></select>
-                    </div>
-                    
-                    <div class="flex gap-2 w-full md:w-auto">
-                        <button onclick="renderLaporan()" class="bg-white border border-gray-200 text-gray-700 hover:bg-gray-50 hover:text-indigo-600 font-bold px-4 py-2 rounded-lg shadow-sm transition-colors text-sm whitespace-nowrap">
-                            Tampilkan
-                        </button>
-                        <button onclick="window.print()" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold px-4 py-2 rounded-lg shadow-lg shadow-indigo-500/20 transition-all flex items-center justify-center gap-2 text-sm whitespace-nowrap">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path></svg>
-                            PDF
-                        </button>
-                    </div>
+
+                <div id="laporan-header" style="margin-bottom:14px; font-size:0.8125rem;"></div>
+
+                <div style="overflow-x:auto;">
+                    <table style="width:100%; border-collapse:collapse; font-size:0.8125rem;" class="laporan-table">
+                        <thead>
+                            <tr style="background:rgba(255,255,255,0.05);">
+                                <th style="border:1px solid rgba(255,255,255,0.1); padding:8px 10px;">No</th>
+                                <th style="border:1px solid rgba(255,255,255,0.1); padding:8px 10px;">Tanggal</th>
+                                <th style="border:1px solid rgba(255,255,255,0.1); padding:8px 10px; text-align:left;">Uraian</th>
+                                <th style="border:1px solid rgba(255,255,255,0.1); padding:8px 10px; text-align:right;">Jumlah (Rp)</th>
+                                <th style="border:1px solid rgba(255,255,255,0.1); padding:8px 10px; text-align:right;">Sisa Saldo (Rp)</th>
+                            </tr>
+                        </thead>
+                        <tbody id="laporan-body"></tbody>
+                    </table>
                 </div>
-                
-                <!-- Print Area for Report -->
-                <div id="print-area" class="print:block bg-white dark:bg-gray-800 p-8 md:p-10 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 min-h-[400px]">
-                    <div class="text-center mb-10 pb-6 border-b-2 border-gray-200 dark:border-gray-700 no-print">
-                        <svg class="w-16 h-16 text-gray-300 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
-                        <p class="text-gray-500 italic">Pilih filter dan klik "Tampilkan" untuk melihat preview laporan</p>
-                    </div>
-                    
-                    <div id="laporan-content" class="hidden text-gray-900 dark:text-white print:text-black">
-                        <div class="text-center mb-6 print-header hidden print:block">
-                            <h2 class="text-xl font-bold uppercase">Laporan Kartu Kendali</h2>
-                            <p class="text-sm">Realisasi Anggaran SKPD</p>
-                            <div class="border-b-2 border-black w-full mt-4 mb-1"></div>
-                            <div class="border-b border-black w-full mb-6"></div>
-                        </div>
-                        
-                        <div id="laporan-header" class="mb-6 text-sm"></div>
-                        
-                        <table class="w-full text-sm border-collapse border border-gray-800 dark:border-gray-300 mb-6">
-                            <thead>
-                                <tr class="bg-gray-100 dark:bg-gray-700 print:bg-gray-100 print:text-black">
-                                    <th class="border border-gray-800 dark:border-gray-300 print:border-black py-2 px-3">No</th>
-                                    <th class="border border-gray-800 dark:border-gray-300 print:border-black py-2 px-3">Tanggal</th>
-                                    <th class="border border-gray-800 dark:border-gray-300 print:border-black py-2 px-3 text-left">Uraian</th>
-                                    <th class="border border-gray-800 dark:border-gray-300 print:border-black py-2 px-3 text-right">Jumlah (Rp)</th>
-                                    <th class="border border-gray-800 dark:border-gray-300 print:border-black py-2 px-3 text-right">Sisa Saldo (Rp)</th>
-                                </tr>
-                            </thead>
-                            <tbody id="laporan-body">
-                                <!-- Data Laporan -->
-                            </tbody>
-                        </table>
-                        
-                        <div class="flex justify-end mt-12 text-sm text-gray-900 dark:text-white print:text-black">
-                            <div class="text-center">
-                                <p class="mb-16">Dicetak pada: <span id="tgl-cetak"></span></p>
-                                <p class="font-bold border-b border-black dark:border-white print:border-black inline-block min-w-[150px] pb-1">Pengguna Anggaran</p>
-                            </div>
-                        </div>
-                    </div>
+
+                <div style="text-align:right; margin-top:32px; font-size:0.8125rem;">
+                    <p style="margin-bottom:40px;">Dicetak pada: <span id="tgl-cetak"></span></p>
+                    <p style="font-weight:700; border-bottom:1px solid #94a3b8; display:inline-block; min-width:150px; padding-bottom:4px;">Pengguna Anggaran</p>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Modal Edit Transaksi -->
-    <div id="edit-modal" class="fixed inset-0 z-50 flex items-center justify-center bg-gray-900/50 backdrop-blur-sm hidden transition-opacity">
-        <div class="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-xl border border-gray-100 dark:border-gray-700 w-full max-w-lg mx-4 animate-fade-in-up">
-            <h3 class="text-xl font-bold text-gray-800 dark:text-white mb-4">Edit Transaksi</h3>
-            <form id="form-edit-transaksi" class="space-y-4">
+    {{-- Modal Edit Transaksi --}}
+    <div id="edit-modal" style="display:none; position:fixed; inset:0; z-index:50; background:rgba(0,0,0,0.7); align-items:center; justify-content:center;">
+        <div style="background:#111827; border:1px solid rgba(255,255,255,0.1); border-radius:10px; padding:20px; width:100%; max-width:440px; margin:0 16px;">
+            <h3 style="font-size:0.875rem; font-weight:600; color:#e2e8f0; margin:0 0 16px;">Edit Transaksi</h3>
+            <form id="form-edit-transaksi">
                 <input type="hidden" id="edit-id">
-                <div>
-                    <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1">Tanggal</label>
-                    <input type="date" id="edit-tanggal" required class="w-full rounded-xl border-gray-200 focus:border-indigo-500 bg-gray-50 dark:bg-gray-900 dark:border-gray-600 dark:text-white py-2">
-                </div>
-                <div>
-                    <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1">Uraian Belanja</label>
-                    <textarea id="edit-uraian" required rows="2" class="w-full rounded-xl border-gray-200 focus:border-indigo-500 bg-gray-50 dark:bg-gray-900 dark:border-gray-600 dark:text-white py-2 resize-none"></textarea>
-                </div>
-                <div>
-                    <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1">Jumlah (Rp)</label>
-                    <input type="number" id="edit-jumlah" required class="w-full rounded-xl border-gray-200 focus:border-indigo-500 bg-gray-50 dark:bg-gray-900 dark:border-gray-600 dark:text-white py-2">
-                </div>
-                <div class="flex justify-end gap-2 pt-2">
-                    <button type="button" onclick="tutupModalEdit()" class="px-4 py-2 bg-gray-200 hover:bg-gray-300 text-gray-700 rounded-lg transition-colors font-medium">Batal</button>
-                    <button type="submit" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg shadow-lg shadow-indigo-500/30 transition-all font-medium">Simpan Perubahan</button>
+                <div style="display:flex; flex-direction:column; gap:12px;">
+                    <div>
+                        <label class="kk-label">Tanggal</label>
+                        <input type="date" id="edit-tanggal" required class="kk-input" style="width:100%; color-scheme:dark;">
+                    </div>
+                    <div>
+                        <label class="kk-label">Uraian Belanja</label>
+                        <textarea id="edit-uraian" required rows="2" class="kk-input" style="width:100%; resize:none;"></textarea>
+                    </div>
+                    <div>
+                        <label class="kk-label">Jumlah (Rp)</label>
+                        <input type="number" id="edit-jumlah" required class="kk-input" style="width:100%;">
+                    </div>
+                    <div style="display:flex; justify-content:flex-end; gap:8px; padding-top:8px; border-top:1px solid rgba(255,255,255,0.06);">
+                        <button type="button" onclick="tutupModalEdit()" style="padding:7px 14px; border-radius:6px; background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.08); color:#94a3b8; font-size:0.8125rem; cursor:pointer;">Batal</button>
+                        <button type="submit" style="padding:7px 14px; border-radius:6px; background:rgba(234,179,8,0.15); border:1px solid rgba(234,179,8,0.3); color:#facc15; font-size:0.8125rem; font-weight:600; cursor:pointer;">Simpan</button>
+                    </div>
                 </div>
             </form>
         </div>
     </div>
 
 <style>
-    /* MENGGUNAKAN d-none AGAR SIDEBAR TAILWIND TIDAK HANCUR */
-    .d-none { display: none !important; }
-
-    @page {
-        size: landscape;
-        margin: 15mm;
+    .kk-tab {
+        padding: 6px 14px;
+        border-radius: 6px;
+        font-size: 0.8125rem;
+        font-weight: 500;
+        cursor: pointer;
+        border: none;
+        background: transparent;
+        color: #64748b;
+        transition: all 0.15s;
     }
-    
+    .kk-tab:hover { color: #94a3b8; background: rgba(255,255,255,0.03); }
+    .kk-tab-active { background: rgba(234,179,8,0.12) !important; color: #facc15 !important; border: 1px solid rgba(234,179,8,0.2) !important; }
+    .kk-section { display: block; }
+    .kk-hidden { display: none !important; }
+    .kk-label { display: block; font-size: 0.75rem; font-weight: 600; color: #94a3b8; margin-bottom: 6px; }
+    .kk-input {
+        padding: 7px 12px;
+        border-radius: 6px;
+        background: #0d1117;
+        border: 1px solid rgba(255,255,255,0.1);
+        color: #e2e8f0;
+        font-size: 0.8125rem;
+        outline: none;
+        transition: border-color 0.15s;
+    }
+    .kk-input:focus { border-color: rgba(234,179,8,0.5); }
+    .kk-select {
+        padding: 7px 12px;
+        border-radius: 6px;
+        background: #0d1117;
+        border: 1px solid rgba(255,255,255,0.1);
+        color: #e2e8f0;
+        font-size: 0.8125rem;
+        outline: none;
+        cursor: pointer;
+    }
+
+    /* Print styles */
+    @page { size: landscape; margin: 15mm; }
     @media print {
-        ::-webkit-scrollbar { display: none !important; }
-        * { scrollbar-width: none !important; }
-
         .no-print { display: none !important; }
-        nav, header { display: none !important; }
-        
-        body, main, .py-8, .max-w-7xl, .bg-white\/80, .dark\:bg-gray-800\/90 { 
-            background: transparent !important; 
-            padding: 0 !important; 
-            margin: 0 !important; 
-            box-shadow: none !important;
-            border: none !important;
-            max-width: 100% !important;
-            min-height: 0 !important;
-        }
-
-        #print-area { 
-            box-shadow: none !important;
-            border: none !important;
-            padding: 0 !important;
-            margin: 0 !important;
-            width: 100% !important;
-            min-height: 0 !important;
-        }
-
+        nav, header, aside { display: none !important; }
+        body, main { background: white !important; padding: 0 !important; margin: 0 !important; }
+        #print-area { box-shadow: none !important; border: none !important; padding: 0 !important; background: white !important; color: black !important; }
+        #laporan-content { color: black !important; }
+        .print-header { display: block !important; }
+        .kk-hidden { display: none !important; }
         table { page-break-inside: auto; }
-        tr { page-break-inside: avoid; page-break-after: auto; }
+        tr { page-break-inside: avoid; }
         thead { display: table-header-group; }
-        tfoot { display: table-footer-group; }
-        
-        #print-area, #print-area * { color: black !important; border-color: black !important; }
+        .laporan-table th, .laporan-table td { border: 1px solid black !important; color: black !important; }
+        #laporan-body tr td { color: black !important; border: 1px solid black !important; }
     }
 </style>
 
 <script>
-    // --- 1. SINKRONISASI LANGSUNG DENGAN DATABASE MYSQL ---
-    // Mengubah data dari PHP Eloquent menjadi Array JavaScript secara otomatis
     const dbRKA = @json($rkas);
     const dbTransaksi = @json($transaksis);
     const isDeveloper = @json(auth()->check() && auth()->user()->role === 'developer');
@@ -328,20 +280,16 @@
 
     function formatRupiah(n) { return new Intl.NumberFormat('id-ID', {style:'currency', currency:'IDR'}).format(n); }
 
-    // Fungsi pindah antar Tab 
     window.showSection = function(id) {
-        document.querySelectorAll('.content-section').forEach(el => el.classList.add('d-none'));
-        document.getElementById(id).classList.remove('d-none');
-        
-        document.querySelectorAll('.nav-link').forEach(el => {
-            el.className = "nav-link w-full sm:w-auto px-6 py-3 hover:bg-white dark:hover:bg-gray-700 text-gray-600 dark:text-gray-300 font-medium rounded-xl transition-all duration-300";
+        document.querySelectorAll('.kk-section').forEach(el => el.classList.add('kk-hidden'));
+        document.getElementById(id).classList.remove('kk-hidden');
+
+        document.querySelectorAll('.kk-tab').forEach(el => {
+            el.classList.remove('kk-tab-active');
         });
-        
         let activeTab = document.getElementById('tab-' + id);
-        if(activeTab) {
-            activeTab.className = "nav-link w-full sm:w-auto px-6 py-3 bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-semibold rounded-xl shadow-lg shadow-blue-500/30 transition-all duration-300 transform hover:-translate-y-0.5";
-        }
-        
+        if(activeTab) activeTab.classList.add('kk-tab-active');
+
         if(id === 'dashboard') renderDashboard();
     }
 
@@ -352,10 +300,8 @@
         document.getElementById('dash-realisasi').innerText = formatRupiah(totalPagu - totalSisa);
         document.getElementById('dash-sisa').innerText = formatRupiah(totalSisa);
 
-        // Menampilkan rincian RKA yang sudah terserap
         let tbody = document.getElementById('dash-rincian');
         let searchKeyword = (document.getElementById('search-rka')?.value || '').toLowerCase();
-        
         let filterKegiatan = document.getElementById('dashboard-kegiatan')?.value || '';
         let filterSubKegiatan = document.getElementById('dashboard-sub-kegiatan')?.value || '';
         let filterRekening = document.getElementById('dashboard-rekening')?.value || '';
@@ -363,56 +309,37 @@
         if (tbody) {
             tbody.innerHTML = '';
             let terserapData = dbRKA.filter(x => (Number(x.pagu) - Number(x.sisa)) > 0);
-            
-            // Filter dropdown
-            if (filterKegiatan) {
-                terserapData = terserapData.filter(x => x.kegiatan === filterKegiatan);
-            }
-            if (filterSubKegiatan) {
-                terserapData = terserapData.filter(x => x.sub_kegiatan === filterSubKegiatan);
-            }
-            if (filterRekening) {
-                // Rekening filter is ID
-                terserapData = terserapData.filter(x => x.id === Number(filterRekening));
-            }
-
-            // Filter teks
+            if (filterKegiatan) terserapData = terserapData.filter(x => x.kegiatan === filterKegiatan);
+            if (filterSubKegiatan) terserapData = terserapData.filter(x => x.sub_kegiatan === filterSubKegiatan);
+            if (filterRekening) terserapData = terserapData.filter(x => x.id === Number(filterRekening));
             if (searchKeyword) {
-                terserapData = terserapData.filter(x => 
+                terserapData = terserapData.filter(x =>
                     (x.kegiatan || '').toLowerCase().includes(searchKeyword) ||
                     (x.sub_kegiatan || '').toLowerCase().includes(searchKeyword) ||
                     (x.kode || '').toLowerCase().includes(searchKeyword) ||
                     (x.nama || '').toLowerCase().includes(searchKeyword)
                 );
             }
-            
+
             if (terserapData.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="5" class="py-10 text-center text-gray-500 italic">Belum ada realisasi anggaran</td></tr>';
+                tbody.innerHTML = '<tr><td colspan="5" style="padding:40px; text-align:center; color:#475569; font-size:0.8125rem; font-style:italic;">Belum ada realisasi anggaran.</td></tr>';
             } else {
                 terserapData.forEach(item => {
                     let realisasi = Number(item.pagu) - Number(item.sisa);
-                    
                     let transHtml = '';
                     let itemTrans = dbTransaksi.filter(t => t.rka_id === item.id);
                     if(itemTrans.length > 0) {
-                        transHtml = '<ul class="mt-2 list-disc pl-4 text-xs text-gray-500 dark:text-gray-400 space-y-1">';
+                        transHtml = '<ul style="list-style:none; margin:8px 0 0; padding:0; display:flex; flex-direction:column; gap:4px;">';
                         itemTrans.forEach(t => {
                             let crudButtons = '';
                             if (isDeveloper) {
-                                crudButtons = `
-                                <div class="flex gap-2">
-                                    <button onclick="bukaModalEdit(${t.id})" class="flex items-center gap-1.5 text-xs font-semibold text-blue-600 hover:text-blue-700 bg-blue-50 hover:bg-blue-100 border border-blue-200 dark:border-blue-800/30 dark:bg-blue-900/30 dark:text-blue-400 dark:hover:bg-blue-900/50 px-2.5 py-1.5 rounded-md transition-all shadow-sm" title="Edit transaksi">
-                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg>
-                                        Edit
-                                    </button>
-                                    <button onclick="hapusTransaksi(${t.id})" class="flex items-center gap-1.5 text-xs font-semibold text-red-600 hover:text-red-700 bg-red-50 hover:bg-red-100 border border-red-200 dark:border-red-800/30 dark:bg-red-900/30 dark:text-red-400 dark:hover:bg-red-900/50 px-2.5 py-1.5 rounded-md transition-all shadow-sm" title="Hapus transaksi">
-                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
-                                        Hapus
-                                    </button>
+                                crudButtons = `<div style="display:flex; gap:6px; flex-shrink:0;">
+                                    <button onclick="bukaModalEdit(${t.id})" style="padding:3px 8px; border-radius:4px; background:rgba(96,165,250,0.1); border:1px solid rgba(96,165,250,0.2); color:#60a5fa; font-size:0.6875rem; cursor:pointer;">Edit</button>
+                                    <button onclick="hapusTransaksi(${t.id})" style="padding:3px 8px; border-radius:4px; background:rgba(239,68,68,0.08); border:1px solid rgba(239,68,68,0.2); color:#f87171; font-size:0.6875rem; cursor:pointer;">Hapus</button>
                                 </div>`;
                             }
-                            transHtml += `<li class="flex justify-between items-center bg-white dark:bg-gray-800 rounded-lg px-3 py-2 mb-2 border border-gray-200 dark:border-gray-700 shadow-sm transition-all hover:shadow-md">
-                                <span class="text-sm font-medium text-gray-800 dark:text-gray-200">${t.uraian} <span class="font-bold text-gray-900 dark:text-white">(${formatRupiah(t.jumlah)})</span></span>
+                            transHtml += `<li style="display:flex; justify-content:space-between; align-items:center; padding:6px 10px; border-radius:6px; background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.05);">
+                                <span style="font-size:0.75rem; color:#94a3b8;">${t.uraian} <strong style="color:#e2e8f0;">(${formatRupiah(t.jumlah)})</strong></span>
                                 ${crudButtons}
                             </li>`;
                         });
@@ -420,19 +347,19 @@
                     }
 
                     tbody.innerHTML += `
-                        <tr class="hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors">
-                            <td class="py-3 px-5 align-top">
-                                <div class="font-semibold text-gray-800 dark:text-gray-200">${item.kegiatan}</div>
-                                <div class="text-xs text-gray-500 dark:text-gray-400 mt-1">${item.sub_kegiatan}</div>
+                        <tr style="border-bottom:1px solid rgba(255,255,255,0.04);" onmouseover="this.style.background='rgba(255,255,255,0.02)'" onmouseout="this.style.background='transparent'">
+                            <td style="padding:10px 14px; vertical-align:top;">
+                                <div style="font-size:0.8125rem; font-weight:500; color:#e2e8f0;">${item.kegiatan}</div>
+                                <div style="font-size:0.75rem; color:#475569; margin-top:2px;">${item.sub_kegiatan}</div>
                             </td>
-                            <td class="py-3 px-5 align-top">
-                                <div class="text-xs font-mono bg-gray-100 dark:bg-gray-700 px-2 py-1 rounded inline-block text-gray-600 dark:text-gray-300 mb-1">${item.kode}</div>
-                                <div class="text-sm font-medium text-gray-700 dark:text-gray-300">${item.nama}</div>
+                            <td style="padding:10px 14px; vertical-align:top;">
+                                <code style="font-size:0.6875rem; background:rgba(255,255,255,0.05); padding:1px 6px; border-radius:3px; color:#64748b;">${item.kode}</code>
+                                <div style="font-size:0.8125rem; color:#94a3b8; margin-top:4px;">${item.nama}</div>
                                 ${transHtml}
                             </td>
-                            <td class="py-3 px-5 text-right font-bold text-gray-700 dark:text-gray-300 align-top">${formatRupiah(item.pagu)}</td>
-                            <td class="py-3 px-5 text-right font-semibold text-amber-600 dark:text-amber-400 align-top">${formatRupiah(realisasi)}</td>
-                            <td class="py-3 px-5 text-right font-bold text-emerald-600 dark:text-emerald-400 align-top">${formatRupiah(item.sisa)}</td>
+                            <td style="padding:10px 14px; text-align:right; font-size:0.8125rem; font-weight:600; color:#60a5fa; vertical-align:top; white-space:nowrap;">${formatRupiah(item.pagu)}</td>
+                            <td style="padding:10px 14px; text-align:right; font-size:0.8125rem; font-weight:600; color:#facc15; vertical-align:top; white-space:nowrap;">${formatRupiah(realisasi)}</td>
+                            <td style="padding:10px 14px; text-align:right; font-size:0.8125rem; font-weight:600; color:#34d399; vertical-align:top; white-space:nowrap;">${formatRupiah(item.sisa)}</td>
                         </tr>
                     `;
                 });
@@ -440,15 +367,13 @@
         }
     }
 
-    function getUnique(arr) {
-        return [...new Set(arr)];
-    }
+    function getUnique(arr) { return [...new Set(arr)]; }
 
     function renderDropdowns() {
         let kegiatanList = getUnique(dbRKA.map(x => x.kegiatan).filter(Boolean));
         let opts = '<option value="">-- Filter Kegiatan --</option>';
         kegiatanList.forEach(k => opts += `<option value="${k}">${k}</option>`);
-        
+
         ['transaksi', 'laporan'].forEach(type => {
             let el = document.getElementById(`${type}-kegiatan`);
             if(el) {
@@ -458,12 +383,11 @@
             }
         });
 
-        // KHUSUS DASHBOARD: Hanya tampilkan dropdown yang memiliki data realisasi
         let terserapData = dbRKA.filter(x => (Number(x.pagu) - Number(x.sisa)) > 0);
         let dashKegiatanList = getUnique(terserapData.map(x => x.kegiatan).filter(Boolean));
         let dashOpts = '<option value="">-- Filter Kegiatan --</option>';
         dashKegiatanList.forEach(k => dashOpts += `<option value="${k}">${k}</option>`);
-        
+
         if (document.getElementById('dashboard-kegiatan')) {
             document.getElementById('dashboard-kegiatan').innerHTML = dashOpts;
             document.getElementById('dashboard-sub-kegiatan').innerHTML = '<option value="">-- Filter Sub Kegiatan --</option>';
@@ -475,10 +399,8 @@
         let keg = document.getElementById(`${type}-kegiatan`).value;
         let dataSumber = (type === 'dashboard') ? dbRKA.filter(x => (Number(x.pagu) - Number(x.sisa)) > 0) : dbRKA;
         let subKegList = getUnique(dataSumber.filter(x => x.kegiatan === keg).map(x => x.sub_kegiatan).filter(Boolean));
-        
         let opts = '<option value="">-- Filter Sub Kegiatan --</option>';
         subKegList.forEach(sk => opts += `<option value="${sk}">${sk}</option>`);
-        
         document.getElementById(`${type}-sub-kegiatan`).innerHTML = opts;
         document.getElementById(`${type}-rekening`).innerHTML = '<option value="">-- Filter Rekening --</option>';
         if (type === 'transaksi') updateInfoSaldo();
@@ -487,12 +409,10 @@
     window.updateRekeningDropdown = function(type) {
         let keg = document.getElementById(`${type}-kegiatan`).value;
         let subKeg = document.getElementById(`${type}-sub-kegiatan`).value;
-        
         let dataSumber = (type === 'dashboard') ? dbRKA.filter(x => (Number(x.pagu) - Number(x.sisa)) > 0) : dbRKA;
         let rkaList = dataSumber.filter(x => x.kegiatan === keg && x.sub_kegiatan === subKeg);
         let opts = '<option value="">-- Filter Rekening --</option>';
         rkaList.forEach(x => opts += `<option value="${x.id}">${x.kode} - ${x.nama}</option>`);
-        
         document.getElementById(`${type}-rekening`).innerHTML = opts;
         if (type === 'transaksi') updateInfoSaldo();
     }
@@ -503,30 +423,28 @@
         let el = document.getElementById('info-saldo');
         if(item) {
             el.innerText = `Sisa: ${formatRupiah(item.sisa)}`;
-            el.className = item.sisa > 0 ? "absolute right-0 top-0 text-xs px-3 py-1 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 font-bold transform -translate-y-2 translate-x-2" : "absolute right-0 top-0 text-xs px-3 py-1 rounded-full bg-red-50 text-red-700 border border-red-200 font-bold transform -translate-y-2 translate-x-2";
-        } else { 
-            el.classList.add('hidden'); 
+            el.style.display = 'block';
+            el.style.background = item.sisa > 0 ? 'rgba(16,185,129,0.1)' : 'rgba(239,68,68,0.1)';
+            el.style.color = item.sisa > 0 ? '#34d399' : '#f87171';
+            el.style.borderColor = item.sisa > 0 ? 'rgba(16,185,129,0.2)' : 'rgba(239,68,68,0.2)';
+        } else {
+            el.style.display = 'none';
         }
     }
 
-// --- PROSES SIMPAN REAL TIME KE MYSQL MENGGUNAKAN AJAX FETCH ---
-    document.getElementById('form-transaksi').addEventListener('submit', async function(e) {
+    const formTransaksi = document.getElementById('form-transaksi');
+    if(formTransaksi) formTransaksi.addEventListener('submit', async function(e) {
         e.preventDefault();
-        
-        // 1. Ambil value ID dari dropdown (diubah menjadi format Number)
-        let id_rka = Number(document.getElementById('transaksi-rekening').value); 
+        let id_rka = Number(document.getElementById('transaksi-rekening').value);
         let nom = Number(document.getElementById('transaksi-jumlah').value);
-        
-        // 2. Cari kecocokan data RKA berdasarkan ID, bukan kode rekening lagi
         let idx = dbRKA.findIndex(x => x.id === id_rka);
 
         if(!id_rka) { alert("Pilih rekening dulu!"); return; }
         if(nom > dbRKA[idx].sisa) { alert("Saldo tidak mencukupi! Sisa pagu tinggal " + formatRupiah(dbRKA[idx].sisa)); return; }
 
-        // 3. Siapkan bungkusan data untuk dikirim ke Controller Laravel
         const dataKirim = {
-            id: id_rka,             // PENTING: Kirim ID spesifik agar tidak salah potong Sub Kegiatan
-            kode: dbRKA[idx].kode,  // Tetap kirim kode aslinya untuk dicatat sebagai bukti di tabel transaksi
+            id: id_rka,
+            kode: dbRKA[idx].kode,
             tanggal: document.getElementById('transaksi-tanggal').value,
             uraian: document.getElementById('transaksi-uraian').value,
             jumlah: nom
@@ -535,101 +453,58 @@
         try {
             const response = await fetch("{{ route('kartukendali.store') }}", {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Accept': 'application/json',
-                    'X-CSRF-TOKEN': '{{ csrf_token() }}' // Token pengaman Laravel
-                },
+                headers: { 'Content-Type': 'application/json', 'Accept': 'application/json', 'X-CSRF-TOKEN': '{{ csrf_token() }}' },
                 body: JSON.stringify(dataKirim)
             });
-
-            if(response.ok) {
-                alert("Transaksi Berhasil Disimpan ke Database MySQL!");
-                window.location.reload(); // Reload halaman agar hitungan data MySQL terupdate di layar
-            } else {
-                const resData = await response.json();
-                alert("Gagal menyimpan: " + (resData.message || "Terjadi kesalahan"));
-            }
-        } catch (error) {
-            console.error("Error:", error);
-            alert("Terjadi kesalahan jaringan.");
-        }
+            if(response.ok) { alert("Transaksi berhasil disimpan!"); window.location.reload(); }
+            else { const d = await response.json(); alert("Gagal: " + (d.message || "Terjadi kesalahan")); }
+        } catch (error) { console.error("Error:", error); alert("Terjadi kesalahan jaringan."); }
     });
 
     window.hapusTransaksi = async function(id) {
         if(!confirm("Yakin ingin menghapus transaksi ini? Saldo RKA akan otomatis dikembalikan.")) return;
-        
         try {
             const response = await fetch(`/kartu-kendali/${id}`, {
                 method: 'DELETE',
-                headers: {
-                    'Accept': 'application/json',
-                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
-                }
+                headers: { 'Accept': 'application/json', 'X-CSRF-TOKEN': '{{ csrf_token() }}' }
             });
-
-            if(response.ok) {
-                alert("Transaksi berhasil dihapus!");
-                window.location.reload();
-            } else {
-                const resData = await response.json();
-                alert("Gagal menghapus: " + (resData.message || "Terjadi kesalahan"));
-            }
-        } catch (error) {
-            console.error("Error:", error);
-            alert("Terjadi kesalahan jaringan.");
-        }
+            if(response.ok) { alert("Transaksi berhasil dihapus!"); window.location.reload(); }
+            else { const d = await response.json(); alert("Gagal: " + (d.message || "Terjadi kesalahan")); }
+        } catch (error) { console.error("Error:", error); alert("Terjadi kesalahan jaringan."); }
     }
 
-    // FUNGSI MODAL EDIT
     window.bukaModalEdit = function(id) {
         let t = dbTransaksi.find(x => x.id === id);
         if(!t) return;
-        
         document.getElementById('edit-id').value = t.id;
         document.getElementById('edit-tanggal').value = t.tanggal;
         document.getElementById('edit-uraian').value = t.uraian;
         document.getElementById('edit-jumlah').value = t.jumlah;
-        
-        document.getElementById('edit-modal').classList.remove('hidden');
+        document.getElementById('edit-modal').style.display = 'flex';
     }
 
     window.tutupModalEdit = function() {
-        document.getElementById('edit-modal').classList.add('hidden');
+        document.getElementById('edit-modal').style.display = 'none';
     }
 
-    document.getElementById('form-edit-transaksi').addEventListener('submit', async function(e) {
+    const formEditTransaksi = document.getElementById('form-edit-transaksi');
+    if(formEditTransaksi) formEditTransaksi.addEventListener('submit', async function(e) {
         e.preventDefault();
-        
         let id = document.getElementById('edit-id').value;
         let dataEdit = {
             tanggal: document.getElementById('edit-tanggal').value,
             uraian: document.getElementById('edit-uraian').value,
             jumlah: Number(document.getElementById('edit-jumlah').value)
         };
-
         try {
             const response = await fetch(`/kartu-kendali/${id}`, {
                 method: 'PUT',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Accept': 'application/json',
-                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
-                },
+                headers: { 'Content-Type': 'application/json', 'Accept': 'application/json', 'X-CSRF-TOKEN': '{{ csrf_token() }}' },
                 body: JSON.stringify(dataEdit)
             });
-
-            if(response.ok) {
-                alert("Transaksi berhasil diperbarui!");
-                window.location.reload();
-            } else {
-                const resData = await response.json();
-                alert("Gagal mengupdate: " + (resData.message || "Terjadi kesalahan"));
-            }
-        } catch (error) {
-            console.error("Error:", error);
-            alert("Terjadi kesalahan jaringan.");
-        }
+            if(response.ok) { alert("Transaksi berhasil diperbarui!"); window.location.reload(); }
+            else { const d = await response.json(); alert("Gagal update: " + (d.message || "Terjadi kesalahan")); }
+        } catch (error) { console.error("Error:", error); alert("Terjadi kesalahan jaringan."); }
     });
 
     window.renderLaporan = function() {
@@ -637,37 +512,37 @@
         let rka = dbRKA.find(x => x.id === Number(k));
         if(!rka) { alert("Pilih rekening terlebih dahulu."); return; }
 
-        document.getElementById('laporan-content').classList.remove('hidden');
+        let laporanContent = document.getElementById('laporan-content');
+        laporanContent.style.display = 'block';
 
-        // Menampilkan susunan hierarki Program, Kegiatan, Sub Kegiatan dari Database MySQL
         document.getElementById('laporan-header').innerHTML = `
-            <table class="w-full text-left mb-4">
-                <tr><td width="160" class="align-top font-semibold">Program</td><td class="align-top w-4">:</td><td class="align-top uppercase"><b>${rka.program || '-'}</b></td></tr>
-                <tr><td class="align-top font-semibold">Kegiatan</td><td class="align-top">:</td><td class="align-top"><b>${rka.kegiatan || '-'}</b></td></tr>
-                <tr><td class="align-top font-semibold">Sub Kegiatan</td><td class="align-top">:</td><td class="align-top"><b>${rka.sub_kegiatan || '-'}</b></td></tr>
-                <tr><td class="align-top font-semibold">Keperluan / Rekening</td><td class="align-top">:</td><td class="align-top"><b>${rka.kode} - ${rka.nama}</b></td></tr>
-                <tr><td class="align-top font-semibold pt-2">Total Pagu Anggaran</td><td class="align-top pt-2">:</td><td class="align-top pt-2"><b>${formatRupiah(rka.pagu)}</b></td></tr>
+            <table style="width:100%; font-size:0.8125rem; margin-bottom:12px;">
+                <tr><td style="width:160px; vertical-align:top; font-weight:600;">Program</td><td style="width:16px;">:</td><td><strong>${rka.program || '-'}</strong></td></tr>
+                <tr><td style="vertical-align:top; font-weight:600;">Kegiatan</td><td>:</td><td><strong>${rka.kegiatan || '-'}</strong></td></tr>
+                <tr><td style="vertical-align:top; font-weight:600;">Sub Kegiatan</td><td>:</td><td><strong>${rka.sub_kegiatan || '-'}</strong></td></tr>
+                <tr><td style="vertical-align:top; font-weight:600;">Rekening</td><td>:</td><td><strong>${rka.kode} - ${rka.nama}</strong></td></tr>
+                <tr><td style="vertical-align:top; font-weight:600; padding-top:6px;">Total Pagu</td><td style="padding-top:6px;">:</td><td style="padding-top:6px;"><strong>${formatRupiah(rka.pagu)}</strong></td></tr>
             </table>
         `;
 
         let trans = dbTransaksi.filter(x => x.rka_id === rka.id);
         let tbody = document.getElementById('laporan-body');
         tbody.innerHTML = `
-            <tr class="bg-gray-50 dark:bg-gray-800 print:bg-gray-50">
-                <td colspan="3" class="border border-gray-800 dark:border-gray-300 print:border-black p-2 text-center font-bold">PAGU AWAL</td>
-                <td class="border border-gray-800 dark:border-gray-300 print:border-black p-2 text-center">-</td>
-                <td class="border border-gray-800 dark:border-gray-300 print:border-black p-2 text-right font-bold">${formatRupiah(rka.pagu)}</td>
+            <tr style="background:rgba(255,255,255,0.05);">
+                <td colspan="3" style="border:1px solid rgba(255,255,255,0.1); padding:8px; text-align:center; font-weight:700;">PAGU AWAL</td>
+                <td style="border:1px solid rgba(255,255,255,0.1); padding:8px; text-align:center;">-</td>
+                <td style="border:1px solid rgba(255,255,255,0.1); padding:8px; text-align:right; font-weight:700;">${formatRupiah(rka.pagu)}</td>
             </tr>
         `;
 
         trans.forEach((t, i) => {
             tbody.innerHTML += `
                 <tr>
-                    <td class="border border-gray-800 dark:border-gray-300 print:border-black p-2 text-center">${i+1}</td>
-                    <td class="border border-gray-800 dark:border-gray-300 print:border-black p-2">${t.tanggal}</td>
-                    <td class="border border-gray-800 dark:border-gray-300 print:border-black p-2">${t.uraian}</td>
-                    <td class="border border-gray-800 dark:border-gray-300 print:border-black p-2 text-right">${formatRupiah(t.jumlah)}</td>
-                    <td class="border border-gray-800 dark:border-gray-300 print:border-black p-2 text-right font-bold">${formatRupiah(t.sisa_akhir)}</td>
+                    <td style="border:1px solid rgba(255,255,255,0.1); padding:8px; text-align:center;">${i+1}</td>
+                    <td style="border:1px solid rgba(255,255,255,0.1); padding:8px;">${t.tanggal}</td>
+                    <td style="border:1px solid rgba(255,255,255,0.1); padding:8px;">${t.uraian}</td>
+                    <td style="border:1px solid rgba(255,255,255,0.1); padding:8px; text-align:right;">${formatRupiah(t.jumlah)}</td>
+                    <td style="border:1px solid rgba(255,255,255,0.1); padding:8px; text-align:right; font-weight:700;">${formatRupiah(t.sisa_akhir)}</td>
                 </tr>
             `;
         });
@@ -676,4 +551,5 @@
         document.getElementById('tgl-cetak').innerText = today.toLocaleDateString('id-ID', { year: 'numeric', month: 'long', day: 'numeric' });
     }
 </script>
+
 </x-app-layout>

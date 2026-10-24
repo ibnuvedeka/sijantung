@@ -166,9 +166,9 @@
             </div>
         </div>
 
-        <div class="w-full lg:w-2/3 overflow-x-auto flex flex-col items-center gap-8 pb-10 print:block print:gap-0 print:pb-0" id="print-area">
+        <div class="w-full lg:w-2/3 overflow-x-auto flex flex-col items-center gap-8 pb-10 print:block print:gap-0 print:pb-0 text-black dark:text-black" id="print-area">
             
-            <div class="a4-paper relative">
+            <div class="a4-paper relative text-black dark:text-black">
                 
                 <div class="flex items-center justify-between pb-2">
                     <div class="w-24 flex-shrink-0 flex items-center justify-center">
@@ -252,7 +252,7 @@
                 </div>
             </div>
 
-            <div id="halaman_lampiran" class="a4-paper relative mt-8 print:mt-0" style="page-break-before: always; break-before: page; margin-top: 0 !important;">
+            <div id="halaman_lampiran" class="a4-paper relative mt-8 print:mt-0 text-black dark:text-black" style="page-break-before: always; break-before: page; margin-top: 0 !important;">
                 <div class="w-1/2 ml-auto text-[11pt] mb-8 leading-tight">
                     <table class="w-full">
                         <tr><td class="w-20 align-top">Lampiran I</td><td class="w-4 align-top"></td><td class="align-top" id="out_judul_lampiran">Surat Sekretaris Daerah</td></tr>

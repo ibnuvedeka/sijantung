@@ -2,6 +2,9 @@
 
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
+use App\Models\Surat;
+use App\Models\User;
+use App\Models\TransaksiKartuKendali;
 use App\Http\Controllers\SuratController;
 use App\Http\Controllers\KartuKendaliController;
 use App\Http\Controllers\RkpdController;
@@ -14,7 +17,50 @@ Route::get('/', function () {
 });
 
 Route::get('/dashboard', function () {
-    return view('dashboard');
+    $now = now();
+    $startOfMonth = $now->copy()->startOfMonth();
+    $startOfLastMonth = $now->copy()->subMonth()->startOfMonth();
+    $endOfLastMonth = $now->copy()->subMonth()->endOfMonth();
+
+    // --- Surat ---
+    $totalSurat = Surat::count();
+    $suratBulanIni = Surat::where('created_at', '>=', $startOfMonth)->count();
+    $suratBulanLalu = Surat::whereBetween('created_at', [$startOfLastMonth, $endOfLastMonth])->count();
+    $suratPersen = $suratBulanLalu > 0
+        ? round((($suratBulanIni - $suratBulanLalu) / $suratBulanLalu) * 100)
+        : ($suratBulanIni > 0 ? 100 : 0);
+
+    // --- Users ---
+    $totalUsers = User::count();
+    $usersBulanIni = User::where('created_at', '>=', $startOfMonth)->count();
+    $usersBulanLalu = User::whereBetween('created_at', [$startOfLastMonth, $endOfLastMonth])->count();
+    $usersPersen = $usersBulanLalu > 0
+        ? round((($usersBulanIni - $usersBulanLalu) / $usersBulanLalu) * 100)
+        : ($usersBulanIni > 0 ? 100 : 0);
+
+    // --- RKPD PDF files ---
+    $rkpdPath = public_path('Dokumen RKPD');
+    $totalRkpd = 0;
+    if (File::exists($rkpdPath)) {
+        foreach (File::allFiles($rkpdPath) as $file) {
+            if ($file->getExtension() === 'pdf') $totalRkpd++;
+        }
+    }
+
+    // --- Transaksi SPJ ---
+    $totalTransaksi = TransaksiKartuKendali::count();
+    $trxBulanIni = TransaksiKartuKendali::where('created_at', '>=', $startOfMonth)->count();
+    $trxBulanLalu = TransaksiKartuKendali::whereBetween('created_at', [$startOfLastMonth, $endOfLastMonth])->count();
+    $trxPersen = $trxBulanLalu > 0
+        ? round((($trxBulanIni - $trxBulanLalu) / $trxBulanLalu) * 100)
+        : ($trxBulanIni > 0 ? 100 : 0);
+
+    return view('dashboard', compact(
+        'totalSurat', 'suratPersen',
+        'totalUsers', 'usersPersen',
+        'totalRkpd',
+        'totalTransaksi', 'trxPersen'
+    ));
 })->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::middleware('auth')->group(function () {
